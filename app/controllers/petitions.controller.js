@@ -18,3 +18,29 @@ exports.list = async function(req, res) {
             .send( 'Internal Server Error' );
     }
 };
+
+exports.create = async function(req, res) {
+    console.log( '\nRequest to add a new petition...' );
+    let title = req.body.title;
+    let description = req.body.description;
+    let authorId = 1;
+    let categoryId = req.body.categoryId;
+    let closingDate = req.body.closingDate;
+
+    let today = new Date();
+    let closing = new Date(closingDate);
+
+    if (closing < today) {
+        console.log('Unauthorized');
+    }
+
+    try {
+        console.log("Hi");
+        const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
+        res.status( 200 )
+            .send( 'Petition created!' );
+    } catch( err ) {
+        res.status( 500 )
+            .send( 'Internal Server Error', err );
+    }
+};
