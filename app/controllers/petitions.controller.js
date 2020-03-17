@@ -8,20 +8,38 @@ exports.list = async function(req, res) {
     let categoryId = req.query.categoryId;
     let authorId = req.query.authorId;
     let sortBy = req.query.sortBy;
+    let returnedResults = [];
 
     try {
         const result = await petitions.getAll(q, categoryId, authorId, sortBy);
 
-        if( result.length === 0 ){
+        if (startIndex ===  undefined) {
+            startIndex = 0;
+        }
+        if (count === undefined) {
+            count = result.length;
+        }
+
+        if( result.length !== 0 ) {
+            for (let i = 0; i < count; i++) {
+                console.log(startIndex);
+                if ((startIndex) >= result.length) {
+                    break;
+                }
+                console.log(result[startIndex]);
+                returnedResults.push(result[startIndex]);
+                startIndex++;
+            }
+        }
+
+        if( result.length === 0 || returnedResults.length === 0) {
             res.status(400)
                 .send('Bad Request');
-        }
-        else {
-            //Format the result data (Get Category name from id and author name from id and signature count)
-
+        } else {
             res.status(200)
-                .send(result);
+                .send(returnedResults);
         }
+
     } catch( err ) {
         res.status( 500 )
             .send( 'Internal Server Error' );
