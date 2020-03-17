@@ -57,17 +57,20 @@ exports.create = async function(req, res) {
     let today = new Date();
     let closing = new Date(closingDate);
 
-    //Send status 401 Unauthorized
-    if (closing < today) {
-        console.log('Unauthorized');
-    }
-
-    //Send status 400 Bad Request
-
     try {
-        const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
-        res.status( 200 )
-            .send( 'Petition created!' );
+        if (closing < today) {
+            res.status(401)
+                .send( 'Unauthorized' );
+        } else {
+            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
+            if( result.length === 0) {
+                res.status(400)
+                    .send('Bad Request');
+            } else {
+                res.status(200)
+                    .send('Petition created!');
+            }
+        }
     } catch( err ) {
         res.status( 500 )
             .send( 'Internal Server Error', err );
