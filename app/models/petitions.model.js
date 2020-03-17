@@ -2,29 +2,20 @@ const db = require('../../config/db');
 
 exports.getAll = async function(q, categoryId, authorId, sortBy) {
     console.log( 'Request to list petitions from the database...' );
-    let where = "";
+    let searchTerm = 1;
+    let categoryTerm = 1;
+    let authorTerm = 1;
 
     if (q !== undefined) {
-        let searchTerm = "\"%" + q + "%\"";
-        where += "WHERE Petition.title LIKE " + searchTerm;
+        searchTerm = "Petition.title LIKE \"%" + q + "%\"";
     }
 
     if (categoryId !== undefined) {
-        if (where !== "") {
-            where += " AND "
-        } else {
-            where = "WHERE "
-        }
-        where += "Petition.category_id = " + categoryId;
+        categoryTerm = "Petition.category_id = " + categoryId;
     }
 
     if (authorId !== undefined) {
-        if (where !== "") {
-            where += " AND "
-        } else {
-            where = "WHERE "
-        }
-        where += "Petition.author_id = " + authorId;
+        authorTerm = "Petition.author_id = " + authorId;
     }
 
     let sortTerm = "ORDER BY count(Signature.petition_id) DESC";
@@ -39,10 +30,11 @@ exports.getAll = async function(q, categoryId, authorId, sortBy) {
     }
 
     const conn = await db.getPool().getConnection();
-    //Change to include petitions without signatures
-    const query = `SELECT Petition.petition_id, Petition.title, Petition.category_id, Petition.author_id, count(Petition.petition_id) AS signatureCount
-                   FROM Petition JOIN Signature ON Petition.petition_id=Signature.petition_id 
-                   ${where} 
+    const query = `SELECT Petition.petition_id AS petitionId, Petition.title AS title, Category.name AS category, User.name AS authorName, count(Signature.petition_id) AS signatureCount
+                   FROM ((Petition LEFT JOIN Signature ON Petition.petition_id=Signature.petition_id) 
+                   JOIN Category ON Petition.category_id = Category.category_id) 
+                   JOIN User ON Petition.author_id = User.user_id
+                   WHERE ${searchTerm} AND ${categoryTerm} AND ${authorTerm}
                    GROUP BY Petition.petition_id 
                    ${sortTerm}`;
     console.log(query);
