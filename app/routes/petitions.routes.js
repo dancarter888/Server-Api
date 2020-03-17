@@ -5,3 +5,19 @@ module.exports = function(app) {
         .get(petitions.list)
         .post(petitions.create);
 };
+
+/*
+module.exports = function(app) {
+    app.route(app.rootUrl + '/petitions/:id')
+        .get(petitions.list)
+        .patch(petitions.create)
+        .delete(petitions.create);
+};
+*/
+
+/*
+module.exports = function(app) {
+    app.route(app.rootUrl + '/petitions/categories')
+        .get(petitions.list);
+};
+*/
