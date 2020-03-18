@@ -67,6 +67,101 @@ exports.create = async function(req, res) {
                 res.status(400)
                     .send('Bad Request');
             } else {
+                //SEND THE petitionId instead of the result
+                res.status(200)
+                    .send(result);
+            }
+        }
+    } catch( err ) {
+        res.status( 500 )
+            .send( 'Internal Server Error', err );
+    }
+};
+
+
+exports.view = async function(req, res) {
+    console.log( '\nRequest to view a petition...' );
+
+    try {
+        if (closing < today) {
+            res.status(401)
+                .send( 'Unauthorized' );
+        } else {
+            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
+            if( result.length === 0) {
+                res.status(400)
+                    .send('Bad Request');
+            } else {
+                res.status(200)
+                    .send('Petition created!');
+            }
+        }
+    } catch( err ) {
+        res.status( 500 )
+            .send( 'Internal Server Error', err );
+    }
+};
+
+exports.edit = async function(req, res) {
+    console.log( '\nRequest to edit a petition...' );
+
+    try {
+        if (closing < today) {
+            res.status(401)
+                .send( 'Unauthorized' );
+        } else {
+            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
+            if( result.length === 0) {
+                res.status(400)
+                    .send('Bad Request');
+            } else {
+                res.status(200)
+                    .send('Petition created!');
+            }
+        }
+    } catch( err ) {
+        res.status( 500 )
+            .send( 'Internal Server Error', err );
+    }
+};
+
+exports.delete = async function(req, res) {
+    console.log( '\nRequest to delete a petition...' );
+
+    try {
+        if (closing < today) {
+            res.status(401)
+                .send( 'Unauthorized' );
+        } else {
+            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
+            if( result.length === 0) {
+                res.status(400)
+                    .send('Bad Request');
+            } else {
+                res.status(200)
+                    .send('Petition created!');
+            }
+        }
+    } catch( err ) {
+        res.status( 500 )
+            .send( 'Internal Server Error', err );
+    }
+};
+
+
+exports.listCategories = async function(req, res) {
+    console.log( '\nRequest to list categories...' );
+
+    try {
+        if (closing < today) {
+            res.status(401)
+                .send( 'Unauthorized' );
+        } else {
+            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
+            if( result.length === 0) {
+                res.status(400)
+                    .send('Bad Request');
+            } else {
                 res.status(200)
                     .send('Petition created!');
             }
