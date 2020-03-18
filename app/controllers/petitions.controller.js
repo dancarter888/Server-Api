@@ -42,7 +42,7 @@ exports.list = async function(req, res) {
 
     } catch( err ) {
         res.status( 500 )
-            .send( 'Internal Server Error' );
+            .send( 'Internal Server Error');
     }
 };
 
@@ -74,31 +74,27 @@ exports.create = async function(req, res) {
         }
     } catch( err ) {
         res.status( 500 )
-            .send( 'Internal Server Error', err );
+            .send( 'Internal Server Error');
     }
 };
 
 
 exports.view = async function(req, res) {
     console.log( '\nRequest to view a petition...' );
+    let petitionId = req.params.id;
 
     try {
-        if (closing < today) {
-            res.status(401)
-                .send( 'Unauthorized' );
+        const result = await petitions.getOne(petitionId);
+        if( result.length === 0) {
+            res.status(404)
+                .send('Not Found');
         } else {
-            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
-            if( result.length === 0) {
-                res.status(400)
-                    .send('Bad Request');
-            } else {
-                res.status(200)
-                    .send('Petition created!');
-            }
+            res.status(200)
+                .send(result);
         }
     } catch( err ) {
         res.status( 500 )
-            .send( 'Internal Server Error', err );
+            .send( 'Internal Server Error');
     }
 };
 
@@ -121,7 +117,7 @@ exports.edit = async function(req, res) {
         }
     } catch( err ) {
         res.status( 500 )
-            .send( 'Internal Server Error', err );
+            .send( 'Internal Server Error');
     }
 };
 
@@ -144,7 +140,7 @@ exports.delete = async function(req, res) {
         }
     } catch( err ) {
         res.status( 500 )
-            .send( 'Internal Server Error', err );
+            .send( 'Internal Server Error');
     }
 };
 
@@ -168,6 +164,6 @@ exports.listCategories = async function(req, res) {
         }
     } catch( err ) {
         res.status( 500 )
-            .send( 'Internal Server Error', err );
+            .send( 'Internal Server Error');
     }
 };

@@ -54,3 +54,20 @@ exports.insert = async function(title, description, authorId, categoryId, today,
     conn.release();
     return result;
 };
+
+exports.getOne = async function(petitionId) {
+    console.log('Request to view one petition from the database');
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT Petition.petition_id AS petitionId, Petition.title AS title, Category.name AS category, User.name AS authorName, count(Signature.petition_id) AS signatureCount,
+                   Petition.description AS description, Petition.author_id AS authorId, User.city AS authorCity, User.country AS authorCountry, Petition.created_date AS createdDate,
+                   Petition.closing_date AS closingDate
+                   FROM ((Petition LEFT JOIN Signature ON Petition.petition_id=Signature.petition_id) 
+                   JOIN Category ON Petition.category_id = Category.category_id) 
+                   JOIN User ON Petition.author_id = User.user_id
+                   WHERE Petition.petition_id = ${petitionId}`;
+    console.log(query);
+    const [result] = await conn.query(query);
+    conn.release();
+    return result;
+};
+
