@@ -15,7 +15,6 @@ exports.insert = async function(name, email, password, city, country) {
     const conn = await db.getPool().getConnection();
     const query = 'INSERT INTO User(name, email, password, auth_token, city, country, photo_filename) VALUES (?)';
     let values = [name, email, password, null, city, country, null];
-    console.log(values);
     const [result] = await conn.query(query, [values]);
     const [userId] = await conn.query('SELECT User.user_id AS userId FROM User WHERE user_id = (SELECT max(user_id) FROM User)');
     conn.release();

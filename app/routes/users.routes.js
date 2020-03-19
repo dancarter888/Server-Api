@@ -1,4 +1,5 @@
 const users = require( '../controllers/users.controller' );
+const authenticate = require('../middleware/cors.middleware');
 
 module.exports = function(app) {
     app.route(app.rootUrl + '/users/register')

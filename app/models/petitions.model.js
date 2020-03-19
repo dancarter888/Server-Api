@@ -77,7 +77,7 @@ exports.getCategories = async function() {
     const query = `SELECT category_id AS categoryId, name AS name 
                    FROM Category`;
     console.log(query);
-    const [result] = await conn.query(query);
+    const result = (await conn.query(query))[0];
     conn.release();
     return result;
 };

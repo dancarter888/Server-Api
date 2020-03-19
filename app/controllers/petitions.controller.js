@@ -84,7 +84,7 @@ exports.view = async function(req, res) {
     let petitionId = req.params.id;
 
     try {
-        const result = await petitions.getOne(petitionId);
+        const [result] = await petitions.getOne(petitionId);
         if( result.length === 0) {
             res.status(404)
                 .send('Not Found');

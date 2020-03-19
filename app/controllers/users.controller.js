@@ -7,16 +7,25 @@ exports.register = async function(req, res) {
     let name = req.body.name;
     let email = req.body.email;
     let password = req.body.password;
-    let city = req.body.city;
-    let country = req.body.country;
+    let city = null;
+    if (req.body.city !== undefined) {
+        city = req.body.city;
+    }
+    let country = null;
+    if (req.body.country !== undefined) {
+        country = req.body.country;
+    }
+    console.log("req.body", req.body);
+    console.log(country, city);
 
     try {
         let emailCheck = await users.checkEmail(email);
         if(!(email.includes("@")) || emailCheck.length !== 0) {
+            res.statsMessage = "Bad Request";
             res.status(400)
-                .send('Bad Request');
+                .send();
         } else {
-            const result = await users.insert(name, email, password, city, country);
+            const [result] = await users.insert(name, email, password, city, country);
             res.status(201)
                 .send(result);
         }
