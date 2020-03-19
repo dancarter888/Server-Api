@@ -71,3 +71,14 @@ exports.getOne = async function(petitionId) {
     return result;
 };
 
+exports.getCategories = async function() {
+    console.log('Request to view categories from the database');
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT category_id AS categoryId, name AS name 
+                   FROM Category`;
+    console.log(query);
+    const [result] = await conn.query(query);
+    conn.release();
+    return result;
+};
+

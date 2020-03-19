@@ -17,7 +17,7 @@ exports.register = async function(req, res) {
                 .send('Bad Request');
         } else {
             const result = await users.insert(name, email, password, city, country);
-            res.status(200)
+            res.status(201)
                 .send(result);
         }
     } catch( err ) {
@@ -26,9 +26,9 @@ exports.register = async function(req, res) {
     }
 };
 
-/*
-exports.view = async function(req, res) {
-    console.log( '\nRequest to view a petition...' );
+
+exports.login = async function(req, res) {
+    console.log( '\nRequest login a user...' );
     let petitionId = req.params.id;
 
     try {
@@ -44,4 +44,4 @@ exports.view = async function(req, res) {
         res.status( 500 )
             .send( 'Internal Server Error');
     }
-};*/
+};

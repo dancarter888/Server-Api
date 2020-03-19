@@ -3,10 +3,11 @@ const users = require( '../controllers/users.controller' );
 module.exports = function(app) {
     app.route(app.rootUrl + '/users/register')
         .post(users.register);
-/*
-    app.route(app.rootUrl + '/users/logim')
+
+    app.route(app.rootUrl + '/users/login')
         .post(users.login);
 
+/*
     app.route(app.rootUrl + '/users/logout')
         .post(users.logout);
 
@@ -14,5 +15,7 @@ module.exports = function(app) {
         .get(users.view);
 
     app.route(app.rootUrl + '/users/logout')
-        .post(users.change);*/
+        .post(users.change);*!/
+
+ */
 };

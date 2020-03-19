@@ -32,7 +32,7 @@ exports.list = async function(req, res) {
             }
         }
 
-        if( result.length === 0 || returnedResults.length === 0) {
+        if(result.length === 0 || returnedResults.length === 0) {
             res.status(400)
                 .send('Bad Request');
         } else {
@@ -68,7 +68,7 @@ exports.create = async function(req, res) {
                     .send('Bad Request');
             } else {
                 //SEND THE petitionId instead of the result
-                res.status(200)
+                res.status(201)
                     .send(result);
             }
         }
@@ -149,20 +149,10 @@ exports.listCategories = async function(req, res) {
     console.log( '\nRequest to list categories...' );
 
     try {
-        if (closing < today) {
-            res.status(401)
-                .send( 'Unauthorized' );
-        } else {
-            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
-            if( result.length === 0) {
-                res.status(400)
-                    .send('Bad Request');
-            } else {
-                res.status(200)
-                    .send('Petition created!');
-            }
-        }
-    } catch( err ) {
+        const result = await petitions.getCategories();
+            res.status(200)
+                .send(result);
+     } catch( err ) {
         res.status( 500 )
             .send( 'Internal Server Error');
     }
