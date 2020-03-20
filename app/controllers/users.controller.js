@@ -3,7 +3,6 @@ const users = require('../models/users.model');
 exports.register = async function(req, res) {
     console.log( '\nRequest to register a new user...' );
 
-    //Make city and country optional fields
     let name = req.body.name;
     let email = req.body.email;
     let password = req.body.password;
@@ -21,7 +20,7 @@ exports.register = async function(req, res) {
     try {
         let emailCheck = await users.checkEmail(email);
         console.log(emailCheck);
-        if(email === undefined ||!(email.includes("@")) || emailCheck.length !== 0 || name === undefined || password === undefined) {
+        if(email === undefined || !(email.includes("@")) || emailCheck.length !== 0 || name === undefined || password === undefined) {
             res.statusMessage = "Bad Request";
             res.status(400)
                 .send();
@@ -80,12 +79,12 @@ exports.logout = async function(req, res) {
 };
 
 exports.view = async function(req, res) {
-    let authenticateduserId = req.authenticatedUserId;
+    let authenticatedUserId = req.authenticatedUserId;
     let reqUserId = req.params.id;
     console.log( '\nRequest to view a user...' );
 
     try {
-        const result = await users.getOne(reqUserId, authenticateduserId);
+        const result = await users.getOne(reqUserId, authenticatedUserId);
         if (result === null) {
             res.statusMessage = "Not Found";
             res.status(404)
@@ -98,5 +97,96 @@ exports.view = async function(req, res) {
     } catch( err ) {
         res.status( 500 )
             .send( 'Internal Server Error');
+    }
+};
+
+exports.change = async function(req, res) {
+    let authenticatedUserId = req.authenticatedUserId;
+    let reqUserId = req.params.id;
+    let name = req.body.name;
+    let email = req.body.email;
+    let password = req.body.password;
+    let currentPassword = req.body.currentPassword;
+    let city = req.body.city;
+    let country = req.body.country;
+    let changeValues = [];
+    console.log( '\nRequest to view a user...' );
+
+    try {
+        const result = await users.getOneForChange(authenticatedUserId);
+        if (!(await checkChangeValidity(authenticatedUserId, email, password, currentPassword))
+            || req.params.length === 0
+            || currentPassword !== result.password) {
+
+            res.statusMessage = "Bad Request";
+            res.status(400)
+                .send();
+        } else if (reqUserId !== authenticatedUserId) {
+            res.statusMessage = "Unauthorized";
+            res.status(401)
+                .send();
+        } else {
+
+            //Name
+            if (name === undefined) {
+                changeValues.push(result.name);
+            } else {
+                changeValues.push(name);
+            }
+            //Email
+            if (email === undefined) {
+                changeValues.push(result.email);
+            } else {
+                changeValues.push(email);
+            }
+            //Password
+            if (password === undefined) {
+                changeValues.push(result.password);
+            } else {
+                changeValues.push(password);
+            }
+            //City
+            if (city === undefined) {
+                changeValues.push(result.city);
+            } else {
+                changeValues.push(city);
+            }
+            //Country
+            if (country === undefined) {
+                changeValues.push(result.country);
+            } else {
+                changeValues.push(country);
+            }
+            console.log("changeValues:", changeValues);
+
+            const change = await users.changeUser(authenticatedUserId, changeValues[0], changeValues[1], changeValues[2], changeValues[3], changeValues[4]);
+
+            res.statusMessage = "OK";
+            res.status(200)
+                .send();
+        }
+    } catch( err ) {
+        res.status( 500 )
+            .send( 'Internal Server Error');
+    }
+};
+
+checkChangeValidity = async function(authenticatedUserId, email, password, currentPassword) {
+    //Email Check
+    let emailCheck = await users.checkEmail(email);
+    if (email !== undefined && (!(email.includes("@")) || (emailCheck.length !== 0 && (emailCheck[0].user_id).toString() !== authenticatedUserId))) {
+        console.log("email ERROR");
+        return false;
+    //Empty password check
+    } else if (password === "") {
+        console.log("empty password ERROR");
+        return false;
+    //currentPassword inclusion check
+    } else if (password !== undefined && currentPassword === undefined) {
+        console.log("new password given but old password not given ERROR");
+        return false;
+    } else {
+        console.log("VALID");
+        return true;
     }
 };

@@ -57,7 +57,7 @@ exports.removeToken = async function(userId) {
     conn.release();
 };
 
-exports.getOne = async function(reqUserId, authenticateduserId) {
+exports.getOne = async function(reqUserId, authenticatedUserId) {
     console.log(`Request to view a user from the database`);
     const conn = await db.getPool().getConnection();
     const query = `SELECT name , city, country, email
@@ -69,7 +69,7 @@ exports.getOne = async function(reqUserId, authenticateduserId) {
     if (!result) {
         return null
     }
-    if (reqUserId === authenticateduserId) {
+    if (reqUserId === authenticatedUserId) {
         return {
             "name": result.name,
             "city": result.city,
@@ -83,4 +83,28 @@ exports.getOne = async function(reqUserId, authenticateduserId) {
             "country": result.country
         };
     }
+};
+
+exports.getOneForChange = async function(authenticatedUserId) {
+    console.log(`Request to view a user from the database`);
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT name, email, password, city, country
+                   FROM User
+                   WHERE user_id = ${authenticatedUserId}`;
+    const [result] = (await conn.query(query))[0];
+    console.log("result", result);
+    conn.release();
+
+    return result;
+};
+
+exports.changeUser = async function(reqUserId, name, email, password, city, country) {
+    console.log(`Request to view a user from the database`);
+    const conn = await db.getPool().getConnection();
+    const query = `UPDATE User 
+                   SET name = "${name}",email = "${email}", password = "${password}", city = "${city}", country = "${country}"
+                   WHERE user_id = "${reqUserId}"`;
+    const result = (await conn.query(query))[0];
+    console.log(result);
+    conn.release();
 };
