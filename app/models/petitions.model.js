@@ -81,4 +81,3 @@ exports.getCategories = async function() {
     conn.release();
     return result;
 };
-
