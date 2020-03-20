@@ -56,3 +56,31 @@ exports.removeToken = async function(userId) {
     const [result] = await conn.query(query);
     conn.release();
 };
+
+exports.getOne = async function(reqUserId, authenticateduserId) {
+    console.log(`Request to view a user from the database`);
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT name , city, country, email
+                   FROM User
+                   WHERE user_id = ${reqUserId}`;
+    const [result] = (await conn.query(query))[0];
+    console.log("result", result);
+    conn.release();
+    if (!result) {
+        return null
+    }
+    if (reqUserId === authenticateduserId) {
+        return {
+            "name": result.name,
+            "city": result.city,
+            "country": result.country,
+            "email": result.email
+        };
+    } else {
+        return {
+            "name": result.name,
+            "city": result.city,
+            "country": result.country
+        };
+    }
+};

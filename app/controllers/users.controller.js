@@ -78,3 +78,25 @@ exports.logout = async function(req, res) {
             .send( 'Internal Server Error');
     }
 };
+
+exports.view = async function(req, res) {
+    let authenticateduserId = req.authenticatedUserId;
+    let reqUserId = req.params.id;
+    console.log( '\nRequest to view a user...' );
+
+    try {
+        const result = await users.getOne(reqUserId, authenticateduserId);
+        if (result === null) {
+            res.statusMessage = "Not Found";
+            res.status(404)
+                .send();
+        } else {
+            res.statusMessage = "OK";
+            res.status(200)
+                .send(result);
+        }
+    } catch( err ) {
+        res.status( 500 )
+            .send( 'Internal Server Error');
+    }
+};

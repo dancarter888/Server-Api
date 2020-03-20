@@ -35,3 +35,18 @@ exports.loginRequired = async function (req, res, next) {
         next();
     }
 };
+
+exports.loginOptional = async function (req, res, next) {
+    const token = req.header('X-Authorization');
+    console.log("token", token);
+
+    const result = await findUserIdByToken(token);
+    console.log("result", result);
+    if (result === undefined) {
+        req.authenticatedUserId = null;
+        next();
+    } else {
+        req.authenticatedUserId = result.user_id.toString();
+        next();
+    }
+};

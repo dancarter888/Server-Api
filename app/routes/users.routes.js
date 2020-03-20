@@ -11,10 +11,10 @@ module.exports = function(app) {
     app.route(app.rootUrl + '/users/logout')
         .post(authenticate.loginRequired, users.logout);
 
-/*
-    app.route(app.rootUrl + '/users/:id')
-        .get(users.view);
 
+    app.route(app.rootUrl + '/users/:id')
+        .get(authenticate.loginOptional, users.view);
+/*
     app.route(app.rootUrl + '/users/logout')
         .post(users.change);
 
