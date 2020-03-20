@@ -46,3 +46,13 @@ exports.insertToken = async function(token, userId) {
     conn.release();
     return returnVal;
 };
+
+exports.removeToken = async function(userId) {
+    console.log(`Request to remove token for correct user into database`);
+    const conn = await db.getPool().getConnection();
+    const query = `UPDATE User
+                   SET auth_token = null
+                   WHERE user_id = ${userId}`;
+    const [result] = await conn.query(query);
+    conn.release();
+};

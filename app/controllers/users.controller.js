@@ -20,6 +20,7 @@ exports.register = async function(req, res) {
 
     try {
         let emailCheck = await users.checkEmail(email);
+        console.log(emailCheck);
         if(email === undefined ||!(email.includes("@")) || emailCheck.length !== 0 || name === undefined || password === undefined) {
             res.statusMessage = "Bad Request";
             res.status(400)
@@ -33,10 +34,9 @@ exports.register = async function(req, res) {
     } catch( err ) {
         res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( );
+            .send(err );
     }
 };
-
 
 exports.login = async function(req, res) {
     console.log( '\nRequest to login a user...' );
@@ -58,6 +58,21 @@ exports.login = async function(req, res) {
             res.status(200)
                 .send(result);
         }
+    } catch( err ) {
+        res.status( 500 )
+            .send( 'Internal Server Error');
+    }
+};
+
+exports.logout = async function(req, res) {
+    let userId = req.authenticatedUserId;
+    console.log( '\nRequest to logout a user...' );
+
+    try {
+        await users.removeToken(userId);
+        res.statusMessage = "OK";
+        res.status(200)
+            .send();
     } catch( err ) {
         res.status( 500 )
             .send( 'Internal Server Error');

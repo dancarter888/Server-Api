@@ -7,14 +7,14 @@ exports.allowCrossOriginRequestsMiddleware = function (req, res, next) {
     next();
 };
 
-exports.findUserIdByToken = async function(token) {
+findUserIdByToken = async function(token) {
     console.log('Request to find user by token from the database');
     const conn = await db.getPool().getConnection();
     const query = `SELECT user_id 
                    FROM User 
-                   WHERE auth_token = ${token}`;
-    console.log(query);
-    const result = (await conn.query(query))[0];
+                   WHERE auth_token = "${token}"`;
+    const [result] = (await conn.query(query))[0];
+    console.log(result);
     conn.release();
     return result;
 };
@@ -22,9 +22,11 @@ exports.findUserIdByToken = async function(token) {
 
 exports.loginRequired = async function (req, res, next) {
     const token = req.header('X-Authorization');
+    console.log("token", token);
 
     const result = await findUserIdByToken(token);
-    if (result === null) {
+    console.log("result", result);
+    if (result === undefined) {
         res.statusMessage = "Unauthorized";
         res.status(401)
             .send();
