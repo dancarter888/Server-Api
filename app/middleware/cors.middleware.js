@@ -1,3 +1,5 @@
+const db = require('../../config/db');
+
 exports.allowCrossOriginRequestsMiddleware = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Authorization');
@@ -5,6 +7,17 @@ exports.allowCrossOriginRequestsMiddleware = function (req, res, next) {
     next();
 };
 
+exports.findUserIdByToken = async function(token) {
+    console.log('Request to find user by token from the database');
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT user_id 
+                   FROM User 
+                   WHERE auth_token = ${token}`;
+    console.log(query);
+    const result = (await conn.query(query))[0];
+    conn.release();
+    return result;
+};
 
 
 exports.loginRequired = async function (req, res, next) {

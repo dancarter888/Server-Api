@@ -20,32 +20,41 @@ exports.register = async function(req, res) {
 
     try {
         let emailCheck = await users.checkEmail(email);
-        if(!(email.includes("@")) || emailCheck.length !== 0) {
-            res.statsMessage = "Bad Request";
+        if(!(email.includes("@")) || emailCheck.length !== 0 || password === undefined) {
+            res.statusMessage = "Bad Request";
             res.status(400)
                 .send();
         } else {
             const [result] = await users.insert(name, email, password, city, country);
+            res.statusMessage = "Created";
             res.status(201)
                 .send(result);
         }
     } catch( err ) {
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send( );
     }
 };
 
 
 exports.login = async function(req, res) {
-    console.log( '\nRequest login a user...' );
-    let petitionId = req.params.id;
+    console.log( '\nRequest to login a user...' );
+    let email = req.body.email;
+    let password = req.body.password;
 
     try {
-        const result = await users.getOne(petitionId);
-        if( result.length === 0) {
-            res.status(404)
-                .send('Not Found');
+        const loginUser = (await users.checkUser(email, password))[0];
+        if( loginUser.length === 0) {
+            res.statusMessage = "Bad Request";
+            res.status(400)
+                .send();
         } else {
+            let token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            console.log("vals:", email, password, token, loginUser.user_id);
+            const result = (await users.insertToken(token, loginUser.user_id))[0];
+            console.log("result:", result, result.userId, result.token);
+            res.statusMessage = "OK";
             res.status(200)
                 .send(result);
         }
