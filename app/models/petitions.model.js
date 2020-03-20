@@ -27,6 +27,8 @@ exports.getAll = async function(q, categoryId, authorId, sortBy) {
         sortTerm = "ORDER BY count(Signature.petition_id) ASC";
     } else if (sortBy === "SIGNATURES_DESC") {
         sortTerm = "ORDER BY count(Signature.petition_id) DESC";
+    } else {
+        return null;
     }
 
     const conn = await db.getPool().getConnection();

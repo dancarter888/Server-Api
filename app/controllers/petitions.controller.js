@@ -20,7 +20,7 @@ exports.list = async function(req, res) {
             count = result.length;
         }
 
-        if( result.length !== 0 ) {
+        if( result!== null && result.length !== 0 ) {
             for (let i = 0; i < count; i++) {
                 console.log(startIndex);
                 if ((startIndex) >= result.length) {
@@ -32,7 +32,7 @@ exports.list = async function(req, res) {
             }
         }
 
-        if(result.length === 0 || returnedResults.length === 0) {
+        if(result === null) {
             res.status(400)
                 .send('Bad Request');
         } else {
