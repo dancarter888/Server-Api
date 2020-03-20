@@ -20,7 +20,7 @@ exports.register = async function(req, res) {
 
     try {
         let emailCheck = await users.checkEmail(email);
-        if(!(email.includes("@")) || emailCheck.length !== 0 || password === undefined) {
+        if(email === undefined ||!(email.includes("@")) || emailCheck.length !== 0 || name === undefined || password === undefined) {
             res.statusMessage = "Bad Request";
             res.status(400)
                 .send();
