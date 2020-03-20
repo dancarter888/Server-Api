@@ -45,7 +45,7 @@ exports.login = async function(req, res) {
 
     try {
         const loginUser = (await users.checkUser(email, password))[0];
-        if( loginUser.length === 0) {
+        if( loginUser === undefined) {
             res.statusMessage = "Bad Request";
             res.status(400)
                 .send();
