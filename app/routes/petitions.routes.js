@@ -11,6 +11,6 @@ module.exports = function(app) {
 
     app.route(app.rootUrl + '/petitions/:id')
         .get(petitions.view)
-        .patch(petitions.edit)
-        .delete(petitions.delete);
+        .patch(authenticate.loginRequired, petitions.edit)
+        .delete(authenticate.loginRequired, petitions.remove);
 };

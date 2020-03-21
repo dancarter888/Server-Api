@@ -85,3 +85,68 @@ exports.getCategories = async function() {
     conn.release();
     return result;
 };
+
+exports.checkCategoryId = async function(categoryId) {
+    console.log('Request to view categories from the database');
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT category_id
+                   FROM Category
+                   WHERE category_id = ${categoryId}`;
+    console.log(query);
+    const result = (await conn.query(query))[0];
+    conn.release();
+    return result;
+};
+
+exports.update = async function(petitionId, title, description, categoryId, closingDate) {
+    console.log('Request to update a petition in the database');
+    let titleTerm = "";
+    let descriptionTerm = "";
+    let categoryIdTerm = "";
+    let closingDateTerm = "";
+
+    if (title !== undefined) {
+        titleTerm = `, title = '${title}'`
+    }
+    if (description !== undefined) {
+        descriptionTerm = `, description = '${description}'`
+    }
+    if (categoryId !== undefined) {
+        categoryIdTerm = `, category_id = '${categoryId}'`
+    }
+    if (closingDate !== undefined) {
+        closingDateTerm = `, closing_date = '${closingDate}'`
+    }
+
+    console.log(titleTerm, descriptionTerm, categoryIdTerm, closingDateTerm);
+
+    const conn = await db.getPool().getConnection();
+    const query = `Update Petition 
+                   SET petition_id = petition_id ${titleTerm} ${descriptionTerm} ${categoryIdTerm} ${closingDateTerm}
+                   WHERE petition_id = ${petitionId}`;
+    console.log(query);
+    const [result] = await conn.query(query);
+    conn.release();
+};
+
+exports.deletePetition = async function(petitionId) {
+    console.log('Request to delete petition from the database');
+    const conn = await db.getPool().getConnection();
+    const query = `DELETE
+                   FROM Petition
+                   WHERE petition_id = ${petitionId}`;
+    console.log(query);
+    const result = (await conn.query(query))[0];
+    conn.release();
+};
+
+exports.deleteSignatures = async function(petitionId) {
+    console.log('Request to delete signatures from the database');
+    const conn = await db.getPool().getConnection();
+    const query = `DELETE
+                   FROM Signature
+                   WHERE petition_id = ${petitionId}`;
+    console.log(query);
+    const result = (await conn.query(query))[0];
+    conn.release();
+};

@@ -1,5 +1,15 @@
 const petitions = require('../models/petitions.model');
 
+
+categoryCheck = async function(categoryId) {
+    const result = await petitions.checkCategoryId(categoryId);
+    if (result.length === 0) {
+        return false;
+    } else {
+        return true;
+    }
+};
+
 exports.list = async function(req, res) {
     console.log( '\nRequest to list petitions...' );
     let startIndex = req.query.startIndex;
@@ -58,14 +68,19 @@ exports.create = async function(req, res) {
 
     try {
         if (closing < today) {
+            res.statusMessage = "Bad Request: Closing date not in the future";
             res.status(400)
-                .send( 'Unauthorized' );
+                .send();
         } else if (title === undefined || description === undefined || categoryId === undefined) {
             res.statusMessage = "Bad Request: One or more parameters are not defined";
             res.status(400)
                 .send();
-        } else if (!(typeof title === 'string') || !(typeof description === 'string') || !(typeof categoryId === 'number')) {
+        } else if (!(typeof title === 'string') || !(typeof description === 'string') || !(typeof categoryId === 'number') || !(typeof closingDate === 'string')) {
             res.statusMessage = "Bad Request: One or more parameters have the wrong type";
+            res.status(400)
+                .send();
+        } else if (!(await categoryCheck(categoryId))) {
+            res.statusMessage = "Bad Request: CategoryId does not match an existing category";
             res.status(400)
                 .send();
         } else {
@@ -88,9 +103,11 @@ exports.view = async function(req, res) {
     try {
         const [result] = await petitions.getOne(petitionId);
         if( result.length === 0) {
+            res.statusMessage = "Not Found";
             res.status(404)
-                .send('Not Found');
+                .send();
         } else {
+            res.statusMessage = "OK";
             res.status(200)
                 .send(result);
         }
@@ -102,20 +119,45 @@ exports.view = async function(req, res) {
 
 exports.edit = async function(req, res) {
     console.log( '\nRequest to edit a petition...' );
+    let petitionId = req.params.id;
+    let title = req.body.title;
+    let description = req.body.description;
+    let categoryId = req.body.categoryId;
+    let closingDate = req.body.closingDate;
+    let today = new Date();
+    let closing = new Date(closingDate);
 
     try {
         if (closing < today) {
-            res.status(401)
-                .send( 'Unauthorized' );
+            res.statusMessage = "Bad Request: Closing date not in the future";
+            res.status(400)
+                .send();
+        }
+
+        const [petitionInfo] = await petitions.getOne(petitionId);
+
+        //If petition closed
+        let oldClosingDate = new Date(petitionInfo.closingDate);
+        if (oldClosingDate < today) {
+            res.statusMessage = "Bad Request: Petition has closed";
+            res.status(400)
+                .send();
+        } else if ((title !== undefined && !(typeof title === 'string'))
+            || (description !== undefined && !(typeof description === 'string'))
+            || (categoryId !== undefined && !(typeof categoryId === 'number'))
+            || (closingDate !== undefined && !(typeof closingDate === 'string'))) {
+            res.statusMessage = "Bad Request: One or more parameters have the wrong type";
+            res.status(400)
+                .send();
+        } else if (categoryId !== undefined && !(await categoryCheck(categoryId))) {
+            res.statusMessage = "Bad Request: CategoryId does not match an existing category";
+            res.status(400)
+                .send();
         } else {
-            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
-            if( result.length === 0) {
-                res.status(400)
-                    .send('Bad Request');
-            } else {
-                res.status(200)
-                    .send('Petition created!');
-            }
+            const result = await petitions.update(petitionId, title, description, categoryId, closingDate);
+            res.statusMessage = "OK";
+            res.status(200)
+                .send(result);
         }
     } catch( err ) {
         res.status( 500 )
@@ -123,22 +165,27 @@ exports.edit = async function(req, res) {
     }
 };
 
-exports.delete = async function(req, res) {
+exports.remove = async function(req, res) {
     console.log( '\nRequest to delete a petition...' );
+    let petitionId = req.params.id;
+    let authenticatedUserId = req.authenticatedUserId;
 
     try {
-        if (closing < today) {
-            res.status(401)
-                .send( 'Unauthorized' );
+        const [result] = await petitions.getOne(petitionId);
+        if( result.petitionId === null) {
+            res.statusMessage = "Not Found";
+            res.status(404)
+                .send();
+        } else if (result.authorId.toString() !== authenticatedUserId) {
+            res.statusMessage = "Forbidden";
+            res.status(403)
+                .send();
         } else {
-            const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
-            if( result.length === 0) {
-                res.status(400)
-                    .send('Bad Request');
-            } else {
-                res.status(200)
-                    .send('Petition created!');
-            }
+            const result1 = await petitions.deletePetition(petitionId);
+            const result2 = await petitions.deleteSignatures(petitionId);
+            res.statusMessage = "OK";
+            res.status(200)
+                .send();
         }
     } catch( err ) {
         res.status( 500 )
@@ -159,3 +206,4 @@ exports.listCategories = async function(req, res) {
             .send( 'Internal Server Error');
     }
 };
+
