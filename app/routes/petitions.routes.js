@@ -1,9 +1,10 @@
 const petitions = require( '../controllers/petitions.controller' );
+const authenticate = require('../middleware/cors.middleware');
 
 module.exports = function(app) {
     app.route(app.rootUrl + '/petitions')
         .get(petitions.list)
-        .post(petitions.create);
+        .post(authenticate.loginRequired, petitions.create);
 
     app.route(app.rootUrl + '/petitions/categories')
         .get(petitions.listCategories);

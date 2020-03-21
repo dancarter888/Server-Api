@@ -54,7 +54,9 @@ exports.insert = async function(title, description, authorId, categoryId, today,
     console.log(query, [values]);
     const [result] = await conn.query(query, [values]);
     conn.release();
-    return result;
+    return {
+        "petitionId": result.insertId
+    };
 };
 
 exports.getOne = async function(petitionId) {

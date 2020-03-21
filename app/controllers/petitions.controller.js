@@ -50,8 +50,7 @@ exports.create = async function(req, res) {
     console.log( '\nRequest to add a new petition...' );
     let title = req.body.title;
     let description = req.body.description;
-    //Change this for other authors
-    let authorId = 1;
+    let authorId = req.authenticatedUserId;
     let categoryId = req.body.categoryId;
     let closingDate = req.body.closingDate;
     let today = new Date();
@@ -59,18 +58,21 @@ exports.create = async function(req, res) {
 
     try {
         if (closing < today) {
-            res.status(401)
+            res.status(400)
                 .send( 'Unauthorized' );
+        } else if (title === undefined || description === undefined || categoryId === undefined) {
+            res.statusMessage = "Bad Request: One or more parameters are not defined";
+            res.status(400)
+                .send();
+        } else if (!(typeof title === 'string') || !(typeof description === 'string') || !(typeof categoryId === 'number')) {
+            res.statusMessage = "Bad Request: One or more parameters have the wrong type";
+            res.status(400)
+                .send();
         } else {
             const result = await petitions.insert(title, description, authorId, categoryId, today, closingDate);
-            if( result.length === 0) {
-                res.status(400)
-                    .send('Bad Request');
-            } else {
-                //SEND THE petitionId instead of the result
-                res.status(201)
-                    .send(result);
-            }
+            res.statusMessage = "Created";
+            res.status(201)
+                .send(result);
         }
     } catch( err ) {
         res.status( 500 )
