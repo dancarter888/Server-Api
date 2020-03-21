@@ -27,9 +27,10 @@ exports.getAll = async function(q, categoryId, authorId, sortBy) {
         sortTerm = "ORDER BY count(Signature.petition_id) ASC";
     } else if (sortBy === "SIGNATURES_DESC") {
         sortTerm = "ORDER BY count(Signature.petition_id) DESC";
-    } else {
+    } else if (sortBy !== undefined){
         return null;
     }
+    console.log(sortTerm);
 
     const conn = await db.getPool().getConnection();
     const query = `SELECT Petition.petition_id AS petitionId, Petition.title AS title, Category.name AS category, User.name AS authorName, count(Signature.petition_id) AS signatureCount
@@ -39,7 +40,6 @@ exports.getAll = async function(q, categoryId, authorId, sortBy) {
                    WHERE ${searchTerm} AND ${categoryTerm} AND ${authorTerm}
                    GROUP BY Petition.petition_id 
                    ${sortTerm}`;
-    console.log(query);
     const [rows] = await conn.query(query);
     conn.release();
     return rows;

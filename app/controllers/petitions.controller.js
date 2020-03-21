@@ -23,31 +23,38 @@ exports.list = async function(req, res) {
     try {
         const result = await petitions.getAll(q, categoryId, authorId, sortBy);
 
-        if (startIndex ===  undefined) {
-            startIndex = 0;
-        }
-        if (count === undefined) {
-            count = result.length;
-        }
-
-        if( result!== null && result.length !== 0 ) {
-            for (let i = 0; i < count; i++) {
-                console.log(startIndex);
-                if ((startIndex) >= result.length) {
-                    break;
-                }
-                console.log(result[startIndex]);
-                returnedResults.push(result[startIndex]);
-                startIndex++;
-            }
-        }
-
-        if(result === null) {
+        if (result === null) {
+            res.statusMessage = 'Bad Request';
             res.status(400)
-                .send('Bad Request');
+                .send();
         } else {
-            res.status(200)
-                .send(returnedResults);
+            if (startIndex === undefined) {
+                startIndex = 0;
+            }
+            if (count === undefined) {
+                count = result.length;
+            }
+
+            console.log(result, result.length);
+
+            if (result.length !== 0) {
+                for (let i = 0; i < count; i++) {
+                    console.log(startIndex);
+                    if ((startIndex) >= result.length) {
+                        break;
+                    }
+                    console.log(result[startIndex]);
+                    returnedResults.push(result[startIndex]);
+                    startIndex++;
+                }
+                res.statusMessage = 'OK';
+                res.status(200)
+                    .send(returnedResults);
+            } else {
+                res.statusMessage = 'OK';
+                res.status(200)
+                    .send();
+            }
         }
 
     } catch( err ) {
