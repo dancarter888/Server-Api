@@ -53,7 +53,7 @@ exports.list = async function(req, res) {
             } else {
                 res.statusMessage = 'OK';
                 res.status(200)
-                    .send();
+                    .send(returnedResults);
             }
         }
 
@@ -133,38 +133,45 @@ exports.edit = async function(req, res) {
     let closingDate = req.body.closingDate;
     let today = new Date();
     let closing = new Date(closingDate);
+    let authorId = req.authenticatedUserId;
 
     try {
         if (closing < today) {
             res.statusMessage = "Bad Request: Closing date not in the future";
             res.status(400)
                 .send();
-        }
-
-        const [petitionInfo] = await petitions.getOne(petitionId);
-
-        //If petition closed
-        let oldClosingDate = new Date(petitionInfo.closingDate);
-        if (oldClosingDate < today) {
-            res.statusMessage = "Bad Request: Petition has closed";
-            res.status(400)
-                .send();
-        } else if ((title !== undefined && !(typeof title === 'string'))
-            || (description !== undefined && !(typeof description === 'string'))
-            || (categoryId !== undefined && !(typeof categoryId === 'number'))
-            || (closingDate !== undefined && !(typeof closingDate === 'string'))) {
-            res.statusMessage = "Bad Request: One or more parameters have the wrong type";
-            res.status(400)
-                .send();
-        } else if (categoryId !== undefined && !(await categoryCheck(categoryId))) {
-            res.statusMessage = "Bad Request: CategoryId does not match an existing category";
-            res.status(400)
-                .send();
         } else {
-            const result = await petitions.update(petitionId, title, description, categoryId, closingDate);
-            res.statusMessage = "OK";
-            res.status(200)
-                .send(result);
+
+            const [petitionInfo] = await petitions.getOne(petitionId);
+            let oldClosingDate = new Date(petitionInfo.closingDate);
+            console.log(petitionInfo.authorId.toString(), authorId);
+
+            if (petitionInfo.authorId.toString() !== authorId) {
+                res.statusMessage = "Forbidden";
+                res.status(403)
+                    .send();
+
+            } else if (oldClosingDate < today) { //If petition closed
+                res.statusMessage = "Bad Request: Petition has closed";
+                res.status(400)
+                    .send();
+            } else if ((title !== undefined && !(typeof title === 'string'))
+                || (description !== undefined && !(typeof description === 'string'))
+                || (categoryId !== undefined && !(typeof categoryId === 'number'))
+                || (closingDate !== undefined && !(typeof closingDate === 'string'))) {
+                res.statusMessage = "Bad Request: One or more parameters have the wrong type";
+                res.status(400)
+                    .send();
+            } else if (categoryId !== undefined && !(await categoryCheck(categoryId))) {
+                res.statusMessage = "Bad Request: CategoryId does not match an existing category";
+                res.status(400)
+                    .send();
+            } else {
+                const result = await petitions.update(petitionId, title, description, categoryId, closingDate);
+                res.statusMessage = "OK";
+                res.status(200)
+                    .send();
+            }
         }
     } catch( err ) {
         res.status( 500 )
