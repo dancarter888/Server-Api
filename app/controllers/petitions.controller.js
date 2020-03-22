@@ -138,7 +138,7 @@ exports.edit = async function(req, res) {
     try {
         if (closing < today) {
             res.statusMessage = "Bad Request: Closing date not in the future";
-            res.status(401)
+            res.status(400)
                 .send();
         } else {
 
@@ -151,20 +151,21 @@ exports.edit = async function(req, res) {
                 res.status(403)
                     .send();
 
-            } else if (oldClosingDate < today) { //If petition closed
+            /*} else if (oldClosingDate < today) { //If petition closed
                 res.statusMessage = "Bad Request: Petition has closed";
-                res.status(402)
-                    .send();
+                res.status(400)
+                    .send();*/
+
             } else if ((title !== undefined && !(typeof title === 'string'))
                 || (description !== undefined && !(typeof description === 'string'))
                 || (categoryId !== undefined && !(typeof categoryId === 'number'))
                 || (closingDate !== undefined && !(typeof closingDate === 'string'))) {
                 res.statusMessage = "Bad Request: One or more parameters have the wrong type";
-                res.status(405)
+                res.status(400)
                     .send();
             } else if (categoryId !== undefined && !(await categoryCheck(categoryId))) {
                 res.statusMessage = "Bad Request: CategoryId does not match an existing category";
-                res.status(406)
+                res.status(400)
                     .send();
             } else {
                 const result = await petitions.update(petitionId, title, description, categoryId, closingDate);
