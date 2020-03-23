@@ -151,10 +151,10 @@ exports.edit = async function(req, res) {
                 res.status(403)
                     .send();
 
-            /*} else if (oldClosingDate < today) { //If petition closed
+            } else if ((petitionInfo.closingDate !== null) && oldClosingDate < today) { //If petition closed
                 res.statusMessage = "Bad Request: Petition has closed";
                 res.status(400)
-                    .send();*/
+                    .send();
 
             } else if ((title !== undefined && !(typeof title === 'string'))
                 || (description !== undefined && !(typeof description === 'string'))
