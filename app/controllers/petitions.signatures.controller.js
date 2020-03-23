@@ -70,22 +70,32 @@ exports.sign = async function(req, res) {
 };
 
 exports.remove = async function(req, res) {
-    console.log( '\nRequest to list signatures of a petition...' );
+    console.log( '\nRequest to remove signature of a petition...' );
     let petitionId = req.params.id;
+    let authenticatedUserId  = req.authenticatedUserId;
 
     try {
-        const result = await petitionsSignatures.getAll(petitionId);
-        console.log(result);
-
-        if(result.length === 0) {
+        let [result1] = await petitionsSignatures.checkPetition(petitionId);
+        console.log(result1);
+        if (result1 === undefined) {
             res.statusMessage = "Not Found";
             res.status(404)
-                .send('Bad Request');
+                .send();
         } else {
-            res.status(200)
-                .send(result);
-        }
+            let [result2] = await petitionsSignatures.checkSignature(petitionId, authenticatedUserId);
+            console.log(result2);
 
+            if (result2 !== undefined) {
+                let result3 = petitionsSignatures.delete(petitionId, authenticatedUserId);
+                res.statusMessage = "OK";
+                res.status(200)
+                    .send();
+            } else {
+                res.statusMessage = "Forbidden: user user signature does not exist";
+                res.status(403)
+                    .send();
+            }
+        }
     } catch( err ) {
         res.status( 500 )
             .send( 'Internal Server Error');
