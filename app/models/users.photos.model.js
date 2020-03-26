@@ -73,3 +73,32 @@ exports.updateImage = async function(userId, filename) {
     const [result] = (await conn.query(query));
     conn.release();
 };
+
+exports.checkUserForDelete = async function(userId) {
+    console.log( 'Check that user and user image exists' );
+
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT photo_filename
+                   FROM User
+                   WHERE user_id = ${userId}`;
+    const [result] = (await conn.query(query))[0];
+    conn.release();
+    if (result === undefined) {
+        return undefined;
+    }else if (result.photo_filename === null) {
+        return undefined;
+    } else {
+        return result.photo_filename;
+    }
+};
+
+exports.deleteImage = async function(userId) {
+    console.log( 'Insert image of a user' );
+
+    const conn = await db.getPool().getConnection();
+    const query = `UPDATE User
+                   SET photo_filename = NULL
+                   WHERE user_id = ${userId}`;
+    const [result] = (await conn.query(query));
+    conn.release();
+};

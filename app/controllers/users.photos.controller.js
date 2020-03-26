@@ -3,7 +3,7 @@ const photosDirectory = 'storage/photos/';
 const fs = require('mz/fs');
 
 exports.view = async function(req, res) {
-    console.log( '\nRequest to view a hero image for a user...' );
+    console.log( '\nRequest to view an image for a user...' );
     let userId = req.params.id;
 
     try {
@@ -27,7 +27,7 @@ exports.view = async function(req, res) {
 };
 
 exports.set = async function(req, res) {
-    console.log( '\nRequest to view a hero image for a petition...' );
+    console.log( '\nRequest to view an image for a user...' );
     let userId = req.params.id;
     let authenticatedUserId = req.authenticatedUserId;
     var filename = "user_" + userId.toString();
@@ -79,6 +79,37 @@ exports.set = async function(req, res) {
                         .send();
                 }
             }
+        }
+    } catch( err ) {
+        console.log(err);
+        res.status( 500 )
+            .send( 'Internal Server Error');
+    }
+};
+
+exports.remove = async function(req, res) {
+    console.log( '\nRequest to remove an image for a user...' );
+    let userId = req.params.id;
+    let authenticatedUserId = req.authenticatedUserId;
+
+    try {
+        const userPhoto = await usersPhotos.checkUserForDelete(userId);
+        console.log(userPhoto);
+
+
+        if (userPhoto === undefined) { //Check if user and user photo exists else 404 Not Found
+            res.statusMessage = "Not Found";
+            res.status(404)
+                .send();
+        } else if (userId.toString() !== authenticatedUserId) { //Check if authorId is same as authenticatedUserId else 403 Forbidden
+            res.statusMessage = "Forbidden";
+            res.status(403)
+                .send();
+        } else { //Else if image exists send 200 OK
+            await usersPhotos.deleteImage(userId);
+            res.statusMessage = "OK";
+            res.status(200)
+                .send();
         }
     } catch( err ) {
         console.log(err);
