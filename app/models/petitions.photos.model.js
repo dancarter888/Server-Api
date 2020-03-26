@@ -40,7 +40,11 @@ exports.checkAuthor = async function(petitionId) {
                    WHERE petition_id = ${petitionId}`;
     const [result] = (await conn.query(query))[0];
     conn.release();
-    return result.author_id;
+    if (result === undefined) {
+        return undefined;
+    } else {
+        return result.author_id;
+    }
 };
 
 exports.checkImage = async function(petitionId) {
