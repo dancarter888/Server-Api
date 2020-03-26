@@ -30,3 +30,42 @@ exports.getOne = async function(petitionId) {
         return null;
     }
 };
+
+exports.checkAuthor = async function(petitionId) {
+    console.log( 'Check author of a petition' );
+
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT author_id
+                   FROM Petition
+                   WHERE petition_id = ${petitionId}`;
+    const [result] = (await conn.query(query))[0];
+    conn.release();
+    return result.author_id;
+};
+
+exports.checkImage = async function(petitionId) {
+    console.log( 'Check image of a petition' );
+
+    const conn = await db.getPool().getConnection();
+    const query = `SELECT photo_filename
+                   FROM Petition
+                   WHERE petition_id = ${petitionId}`;
+    const [result] = (await conn.query(query))[0];
+    conn.release();
+    if (result.photo_filename === null) {
+        return null;
+    } else {
+        return result.photo_filename;
+    }
+};
+
+exports.updateImage = async function(petitionId, filename) {
+    console.log( 'Insert image of a petition' );
+
+    const conn = await db.getPool().getConnection();
+    const query = `UPDATE Petition
+                   SET photo_filename = "${filename}"
+                   WHERE petition_id = ${petitionId}`;
+    const [result] = (await conn.query(query));
+    conn.release();
+};

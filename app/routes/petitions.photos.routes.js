@@ -4,6 +4,6 @@ const authenticate = require('../middleware/cors.middleware');
 
 module.exports = function(app) {
     app.route(app.rootUrl + '/petitions/:id/photo')
-        .get(petitionsPhotos.viewHero);
-        /*.put(authenticate.loginRequired, petitionsPhotos.setHero);*/
+        .get(petitionsPhotos.viewHero)
+        .put(authenticate.loginRequired, petitionsPhotos.setHero);
 };
