@@ -34,16 +34,11 @@ exports.list = async function(req, res) {
             if (count === undefined) {
                 count = result.length;
             }
-
-            console.log(result, result.length);
-
             if (result.length !== 0) {
                 for (let i = 0; i < count; i++) {
-                    console.log(startIndex);
                     if ((startIndex) >= result.length) {
                         break;
                     }
-                    console.log(result[startIndex]);
                     returnedResults.push(result[startIndex]);
                     startIndex++;
                 }
@@ -58,6 +53,7 @@ exports.list = async function(req, res) {
         }
 
     } catch( err ) {
+        console.log(err);
         res.status( 500 )
             .send( 'Internal Server Error');
     }
@@ -109,7 +105,7 @@ exports.view = async function(req, res) {
 
     try {
         const [result] = await petitions.getOne(petitionId);
-        if( result.length === 0) {
+        if( result.petitionId === null) {
             res.statusMessage = "Not Found";
             res.status(404)
                 .send();
@@ -217,6 +213,7 @@ exports.listCategories = async function(req, res) {
             res.status(200)
                 .send(result);
      } catch( err ) {
+        console.log(err);
         res.status( 500 )
             .send( 'Internal Server Error');
     }

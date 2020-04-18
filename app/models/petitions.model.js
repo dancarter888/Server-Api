@@ -30,7 +30,6 @@ exports.getAll = async function(q, categoryId, authorId, sortBy) {
     } else if (sortBy !== undefined){
         return null;
     }
-    console.log(sortTerm);
 
     const conn = await db.getPool().getConnection();
     const query = `SELECT Petition.petition_id AS petitionId, Petition.title AS title, Category.name AS category, User.name AS authorName, count(Signature.petition_id) AS signatureCount
@@ -69,7 +68,6 @@ exports.getOne = async function(petitionId) {
                    JOIN Category ON Petition.category_id = Category.category_id) 
                    JOIN User ON Petition.author_id = User.user_id
                    WHERE Petition.petition_id = ${petitionId}`;
-    console.log(query);
     const [result] = await conn.query(query);
     conn.release();
     return result;
@@ -80,7 +78,6 @@ exports.getCategories = async function() {
     const conn = await db.getPool().getConnection();
     const query = `SELECT category_id AS categoryId, name AS name 
                    FROM Category`;
-    console.log(query);
     const result = (await conn.query(query))[0];
     conn.release();
     return result;
