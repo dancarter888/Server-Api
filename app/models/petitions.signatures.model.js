@@ -8,7 +8,6 @@ exports.getAll = async function(petitionId) {
                    FROM Signature JOIN User ON Signature.signatory_id = User.user_id
                    WHERE Signature.petition_id = ${petitionId}
                    ORDER BY signed_date`;
-    console.log(query);
     const [result] = (await conn.query(query));
     conn.release();
     return result;

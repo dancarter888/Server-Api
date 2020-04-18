@@ -10,7 +10,6 @@ exports.getOne = async function(petitionId) {
     const query = `SELECT photo_filename
                    FROM Petition
                    WHERE petition_id = ${petitionId}`;
-    console.log(query);
     const [result] = (await conn.query(query))[0];
     conn.release();
     if (result === undefined) {
@@ -18,9 +17,6 @@ exports.getOne = async function(petitionId) {
     } else if (result.photo_filename === null) {
         return null;
     }
-
-    console.log(result);
-    console.log(result.photo_filename);
 
     if (await fs.exists(photosDirectory + result.photo_filename)) {
         const image = await fs.readFile(photosDirectory + result.photo_filename);

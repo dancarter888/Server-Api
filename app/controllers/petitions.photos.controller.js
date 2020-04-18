@@ -5,11 +5,9 @@ const fs = require('mz/fs');
 exports.viewHero = async function(req, res) {
     console.log( '\nRequest to view a hero image for a petition...' );
     let petitionId = req.params.id;
-    console.log(req.body);
 
     try {
         const imageDetails = await petitionsPhotos.getOne(petitionId);
-        console.log(imageDetails);
 
         if(imageDetails === null) {
             res.statusMessage = "Not Found";

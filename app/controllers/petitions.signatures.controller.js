@@ -7,7 +7,6 @@ exports.list = async function(req, res) {
 
     try {
         const result = await petitionsSignatures.getAll(petitionId);
-        console.log(result);
 
         if(result.length === 0) {
             res.statusMessage = "Not Found";
