@@ -14,13 +14,10 @@ exports.register = async function(req, res) {
     if (req.body.country !== undefined) {
         country = req.body.country;
     }
-    console.log("req.body", req.body);
-    console.log(country, city);
 
     try {
         let emailCheck = await users.checkEmail(email);
-        console.log(emailCheck);
-        if(email === undefined || !(email.includes("@")) || emailCheck.length !== 0 || name === undefined || password === undefined) {
+        if(email === undefined || !(email.includes("@")) || emailCheck.length !== 0 || name === undefined || password === undefined || password === "") {
             res.statusMessage = "Bad Request";
             res.status(400)
                 .send();
@@ -31,9 +28,10 @@ exports.register = async function(req, res) {
                 .send(result);
         }
     } catch( err ) {
+        console.log(err);
         res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send(err );
+            .send();
     }
 };
 
@@ -50,9 +48,7 @@ exports.login = async function(req, res) {
                 .send();
         } else {
             let token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-            console.log("vals:", email, password, token, loginUser.user_id);
             const result = (await users.insertToken(token, loginUser.user_id))[0];
-            console.log("result:", result, result.userId, result.token);
             res.statusMessage = "OK";
             res.status(200)
                 .send(result);

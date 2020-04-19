@@ -19,8 +19,10 @@ exports.list = async function(req, res) {
         }
 
     } catch( err ) {
+        console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -63,8 +65,9 @@ exports.sign = async function(req, res) {
         }
     } catch( err ) {
         console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -96,7 +99,9 @@ exports.remove = async function(req, res) {
             }
         }
     } catch( err ) {
+        console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };

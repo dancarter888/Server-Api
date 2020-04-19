@@ -20,8 +20,9 @@ exports.viewHero = async function(req, res) {
 
     } catch( err ) {
         console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -81,7 +82,8 @@ exports.setHero = async function(req, res) {
         }
     } catch( err ) {
         console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };

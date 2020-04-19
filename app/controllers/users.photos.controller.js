@@ -8,7 +8,6 @@ exports.view = async function(req, res) {
 
     try {
         const imageDetails = await usersPhotos.getOne(userId);
-        console.log(imageDetails);
 
         if(imageDetails === null) {
             res.statusMessage = "Not Found";
@@ -21,8 +20,9 @@ exports.view = async function(req, res) {
 
     } catch( err ) {
         console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -82,8 +82,9 @@ exports.set = async function(req, res) {
         }
     } catch( err ) {
         console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -113,7 +114,8 @@ exports.remove = async function(req, res) {
         }
     } catch( err ) {
         console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };

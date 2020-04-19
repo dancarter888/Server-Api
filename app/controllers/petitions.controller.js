@@ -1,12 +1,19 @@
 const petitions = require('../models/petitions.model');
 
 
-categoryCheck = async function(categoryId) {
-    const result = await petitions.checkCategoryId(categoryId);
-    if (result.length === 0) {
-        return false;
-    } else {
-        return true;
+categoryCheck = async function(categoryId, res) {
+    try {
+        const result = await petitions.checkCategoryId(categoryId);
+        if (result.length === 0) {
+            return false;
+        } else {
+            return true;
+        }
+    } catch( err ) {
+        console.log(err);
+        res.statusMessage = "Internal Server Error";
+        res.status( 500 )
+            .send();
     }
 };
 
@@ -54,8 +61,9 @@ exports.list = async function(req, res) {
 
     } catch( err ) {
         console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -93,8 +101,10 @@ exports.create = async function(req, res) {
                 .send(result);
         }
     } catch( err ) {
+        console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -115,8 +125,10 @@ exports.view = async function(req, res) {
                 .send(result);
         }
     } catch( err ) {
+        console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -171,8 +183,10 @@ exports.edit = async function(req, res) {
             }
         }
     } catch( err ) {
+        console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -199,8 +213,10 @@ exports.remove = async function(req, res) {
                 .send();
         }
     } catch( err ) {
+        console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 
@@ -214,8 +230,9 @@ exports.listCategories = async function(req, res) {
                 .send(result);
      } catch( err ) {
         console.log(err);
+        res.statusMessage = "Internal Server Error";
         res.status( 500 )
-            .send( 'Internal Server Error');
+            .send();
     }
 };
 

@@ -5,7 +5,6 @@ exports.checkEmail = async function(email) {
     const conn = await db.getPool().getConnection();
     const query = `SELECT * FROM User WHERE User.email = "${email}"`;
     const [result] = await conn.query(query);
-    console.log(result);
     conn.release();
     return result;
 };
