@@ -36,20 +36,19 @@ exports.set = async function(req, res) {
 
     try {
         const valid_user_id = await usersPhotos.checkUser(userId);
-        console.log(valid_user_id);
 
         if (req.header('Content-Type') === "image/png") {
             extension = ".png";
             filename += extension;
-            console.log(filename);
+
         } else if (req.header('Content-Type') === "image/jpeg") {
             extension = ".jpg";
             filename += extension;
-            console.log(filename);
+
         }  else if (req.header('Content-Type') === "image/gif") {
             extension = ".gif";
             filename += extension;
-            console.log(filename);
+
         }
         if (extension === ""){
             res.statusMessage = "Bad Request";

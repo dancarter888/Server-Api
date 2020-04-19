@@ -14,7 +14,6 @@ findUserIdByToken = async function(token) {
                    FROM User 
                    WHERE auth_token = "${token}"`;
     const [result] = (await conn.query(query))[0];
-    console.log(result);
     conn.release();
     return result;
 };
@@ -22,10 +21,9 @@ findUserIdByToken = async function(token) {
 
 exports.loginRequired = async function (req, res, next) {
     const token = req.header('X-Authorization');
-    console.log("token", token);
 
     const result = await findUserIdByToken(token);
-    console.log("result", result);
+
     if (result === undefined) {
         res.statusMessage = "Unauthorized";
         res.status(401)
@@ -38,10 +36,9 @@ exports.loginRequired = async function (req, res, next) {
 
 exports.loginOptional = async function (req, res, next) {
     const token = req.header('X-Authorization');
-    console.log("token", token);
 
     const result = await findUserIdByToken(token);
-    console.log("result", result);
+
     if (result === undefined) {
         req.authenticatedUserId = null;
         next();
