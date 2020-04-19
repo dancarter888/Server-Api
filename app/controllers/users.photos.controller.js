@@ -94,8 +94,6 @@ exports.remove = async function(req, res) {
 
     try {
         const userPhoto = await usersPhotos.checkUserForDelete(userId);
-        console.log(userPhoto);
-
 
         if (userPhoto === undefined) { //Check if user and user photo exists else 404 Not Found
             res.statusMessage = "Not Found";
