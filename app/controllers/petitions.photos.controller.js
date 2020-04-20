@@ -36,20 +36,19 @@ exports.setHero = async function(req, res) {
 
     try {
         const authorId = await petitionsPhotos.checkAuthor(petitionId);
-        console.log(authorId);
 
         if (req.header('Content-Type') === "image/png") {
             extension = ".png";
             filename += extension;
-            console.log(filename);
+
         } else if (req.header('Content-Type') === "image/jpeg") {
             extension = ".jpg";
             filename += extension;
-            console.log(filename);
+
         }  else if (req.header('Content-Type') === "image/gif") {
             extension = ".gif";
             filename += extension;
-            console.log(filename);
+
         }
         if (extension === ""){
             res.statusMessage = "Bad Request";

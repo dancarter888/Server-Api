@@ -110,16 +110,16 @@ exports.change = async function(req, res) {
 
     try {
         const result = await users.getOneForChange(authenticatedUserId);
-        if (!(await checkChangeValidity(authenticatedUserId, email, password, currentPassword))
+        if (reqUserId !== authenticatedUserId) {
+            res.statusMessage = "Forbidden";
+            res.status(403)
+                .send();
+        } else if (!(await checkChangeValidity(authenticatedUserId, email, password, currentPassword))
             || req.params.length === 0
             || currentPassword !== result.password) {
 
             res.statusMessage = "Bad Request";
             res.status(400)
-                .send();
-        } else if (reqUserId !== authenticatedUserId) {
-            res.statusMessage = "Unauthorized";
-            res.status(401)
                 .send();
         } else {
 
@@ -153,7 +153,6 @@ exports.change = async function(req, res) {
             } else {
                 changeValues.push(country);
             }
-            console.log("changeValues:", changeValues);
 
             const change = await users.changeUser(authenticatedUserId, changeValues[0], changeValues[1], changeValues[2], changeValues[3], changeValues[4]);
 

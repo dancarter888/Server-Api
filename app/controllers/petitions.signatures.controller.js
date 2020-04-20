@@ -34,7 +34,6 @@ exports.sign = async function(req, res) {
 
     try {
         const [result1] = await petitions.getOne(petitionId);
-        console.log(result1);
 
         if(result1.length !== 0) {
             var oldClosingDate = new Date(result1.closingDate);
@@ -49,7 +48,6 @@ exports.sign = async function(req, res) {
                 .send();
         } else {
             let [result2] = await petitionsSignatures.checkSignature(petitionId, authenticatedUserId);
-            console.log(result2);
 
             if (result2 !== undefined) {
                 res.statusMessage = "Forbidden: user has already signed this petition";
@@ -57,7 +55,6 @@ exports.sign = async function(req, res) {
                     .send();
             } else {
                 let result3 = await petitionsSignatures.insert(petitionId, authenticatedUserId, today);
-                console.log(result3);
                 res.statusMessage = "Created";
                 res.status(201)
                     .send();
@@ -78,14 +75,12 @@ exports.remove = async function(req, res) {
 
     try {
         let [result1] = await petitionsSignatures.checkPetition(petitionId);
-        console.log(result1);
         if (result1 === undefined) {
             res.statusMessage = "Not Found";
             res.status(404)
                 .send();
         } else {
             let [result2] = await petitionsSignatures.checkSignature(petitionId, authenticatedUserId);
-            console.log(result2);
 
             if (result2 !== undefined) {
                 let result3 = petitionsSignatures.delete(petitionId, authenticatedUserId);

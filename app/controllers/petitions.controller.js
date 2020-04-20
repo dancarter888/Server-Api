@@ -152,7 +152,6 @@ exports.edit = async function(req, res) {
 
             const [petitionInfo] = await petitions.getOne(petitionId);
             let oldClosingDate = new Date(petitionInfo.closingDate);
-            console.log(petitionInfo.authorId.toString(), authorId);
 
             if (petitionInfo.authorId.toString() !== authorId) {
                 res.statusMessage = "Forbidden";

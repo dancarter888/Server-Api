@@ -63,7 +63,6 @@ exports.getOne = async function(reqUserId, authenticatedUserId) {
                    FROM User
                    WHERE user_id = ${reqUserId}`;
     const [result] = (await conn.query(query))[0];
-    console.log("result", result);
     conn.release();
     if (!result) {
         return null
@@ -91,7 +90,6 @@ exports.getOneForChange = async function(authenticatedUserId) {
                    FROM User
                    WHERE user_id = ${authenticatedUserId}`;
     const [result] = (await conn.query(query))[0];
-    console.log("result", result);
     conn.release();
 
     return result;
@@ -104,6 +102,5 @@ exports.changeUser = async function(reqUserId, name, email, password, city, coun
                    SET name = "${name}",email = "${email}", password = "${password}", city = "${city}", country = "${country}"
                    WHERE user_id = "${reqUserId}"`;
     const result = (await conn.query(query))[0];
-    console.log(result);
     conn.release();
 };
