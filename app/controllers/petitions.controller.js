@@ -144,13 +144,17 @@ exports.edit = async function(req, res) {
     let authorId = req.authenticatedUserId;
 
     try {
-        if (closing < today) {
+        const [petitionInfo] = await petitions.getOne(petitionId);
+        if (petitionInfo.petitionId === null) {
+            res.statusMessage = "Not Found";
+            res.status(404)
+                .send();
+        } else if (closing < today) {
             res.statusMessage = "Bad Request: Closing date not in the future";
             res.status(400)
                 .send();
         } else {
 
-            const [petitionInfo] = await petitions.getOne(petitionId);
             let oldClosingDate = new Date(petitionInfo.closingDate);
 
             if (petitionInfo.authorId.toString() !== authorId) {
