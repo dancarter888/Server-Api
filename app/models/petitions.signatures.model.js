@@ -20,7 +20,6 @@ exports.checkSignature = async function(petitionId, signatoryId) {
     const query = `SELECT *
                    FROM Signature
                    WHERE Signature.petition_id = ${petitionId} AND Signature.signatory_id = ${signatoryId}`;
-    console.log(query);
     const [result] = (await conn.query(query));
     conn.release();
     return result;
@@ -33,7 +32,6 @@ exports.checkPetition = async function(petitionId) {
     const query = `SELECT *
                    FROM Petition
                    WHERE petition_id = ${petitionId}`;
-    console.log(query);
     const [result] = (await conn.query(query));
     conn.release();
     return result;
@@ -44,10 +42,8 @@ exports.insert = async function(petitionId, signatoryId, signedDate) {
 
     const conn = await db.getPool().getConnection();
     const query = 'INSERT INTO Signature(signatory_id, petition_id, signed_date) VALUES (?)';
-    console.log(query);
     let values = [signatoryId, petitionId, signedDate];
     const [result] = await conn.query(query, [values]);
-    console.log(result);
     conn.release();
 };
 
@@ -57,7 +53,6 @@ exports.delete = async function(petitionId, signatoryId) {
     const conn = await db.getPool().getConnection();
     const query = `DELETE FROM Signature 
                    WHERE signatory_id = ${signatoryId} AND petition_id = ${petitionId}`;
-    console.log(query);
     const [result] = await conn.query(query);
     conn.release();
 };

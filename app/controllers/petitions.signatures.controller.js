@@ -35,10 +35,10 @@ exports.sign = async function(req, res) {
     try {
         const [result1] = await petitions.getOne(petitionId);
 
-        if(result1.length !== 0) {
+        if(result1.petitionId !== null) {
             var oldClosingDate = new Date(result1.closingDate);
         }
-        if(result1.length === 0) {
+        if(result1.petitionId === null) {
             res.statusMessage = "Not Found";
             res.status(404)
                 .send();
